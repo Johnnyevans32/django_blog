@@ -2,6 +2,7 @@ from django.views import generic
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic.base import RedirectView
+from django.utils import timezone
 from .models import Post, Comment
 
 class PostList(generic.ListView):
@@ -97,3 +98,7 @@ def cookie_remove_demo(request):
     response = HttpResponse("<h1>demo_cookie deleted</h1>")
     response.delete_cookie('demo_cookie')
     return response
+
+
+def cache_demo(request):
+    return HttpResponse("<h1>Cache demo time: {0}</h1>".format(timezone.now().isoformat()))

@@ -1,9 +1,10 @@
 from . import views
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     # ── Blog views ──────────────────────────────────────────────────────────
-    path('', views.PostList.as_view(), name='home'),
+    path('', cache_page(60)(views.PostList.as_view()), name='home'),
 
     # Cookie check
     path('testcookie/', views.cookie_session, name='testcookie'),
@@ -21,6 +22,7 @@ urlpatterns = [
     path('cookies/set/', views.cookie_set_demo, name='cookie_set_demo'),
     path('cookies/get/', views.cookie_get_demo, name='cookie_get_demo'),
     path('cookies/delete/', views.cookie_remove_demo, name='cookie_remove_demo'),
+    path('cache-demo/', cache_page(10)(views.cache_demo), name='cache_demo'),
 
     path('<slug:slug>/', views.PostDetail.as_view(), name='post_detail'),
 ]

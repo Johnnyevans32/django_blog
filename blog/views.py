@@ -1,9 +1,13 @@
+import logging
+
 from django.views import generic
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic.base import RedirectView
 from django.utils import timezone
 from .models import Post, Comment
+
+logger = logging.getLogger(__name__)
 
 class PostList(generic.ListView):
     queryset = Post.objects.filter(status=1).order_by('-created_on')
@@ -101,4 +105,13 @@ def cookie_remove_demo(request):
 
 
 def cache_demo(request):
+    logger.info('cache_demo requested at %s', timezone.now().isoformat())
     return HttpResponse("<h1>Cache demo time: {0}</h1>".format(timezone.now().isoformat()))
+
+
+def log_demo(request):
+    logger.debug('log_demo debug message')
+    logger.info('log_demo info message')
+    logger.warning('log_demo warning message')
+    logger.error('log_demo error message')
+    return HttpResponse("<h1>Logging demo: check your runserver console output</h1>")

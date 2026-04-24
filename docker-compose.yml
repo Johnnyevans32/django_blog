@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    env_file:
+      - .env
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn mysite.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - staticfiles:/app/staticfiles
+      - media:/app/media
+      - ./db.sqlite3:/app/db.sqlite3
+    ports:
+      - "8000:8000"
+
+  nginx:
+    build: ./nginx
+    depends_on:
+      - web
+    volumes:
+      - staticfiles:/static
+      - media:/media
+    ports:
+      - "81:80"
+
+volumes:
+  staticfiles:
+  media:

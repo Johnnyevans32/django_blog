@@ -1,6 +1,7 @@
 from django.views import generic
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.views.generic.base import RedirectView
 from .models import Post, Comment
 
 class PostList(generic.ListView):
@@ -50,7 +51,7 @@ def access_session(request):
         response += "Password: {0}<br>".format(request.session.get('password'))
         return HttpResponse(response)
     else:
-        return redirect('create/')
+        return redirect('create_session')
 
 
 def delete_session(request):
@@ -67,3 +68,32 @@ def flush_session(request):
     """Completely destroys the session, including the session ID cookie."""
     request.session.flush()
     return HttpResponse("<h1>Session flushed – session ID and all data have been deleted.</h1>")
+
+
+def example_for_redirect(request):
+    return redirect('home')
+
+
+class TutorialRedirect(RedirectView):
+    url = 'https://urfu.ru/'
+    permanent = False
+    query_string = True
+
+
+def cookie_set_demo(request):
+    response = HttpResponse("<h1>Cookie set: demo_cookie=hello</h1>")
+    response.set_cookie('demo_cookie', 'hello', max_age=3600, samesite='Lax')
+    return response
+
+
+def cookie_get_demo(request):
+    value = request.COOKIES.get('demo_cookie')
+    if value is None:
+        return HttpResponse("<h1>No demo_cookie found. Visit /cookies/set/ first.</h1>")
+    return HttpResponse("<h1>demo_cookie value: {0}</h1>".format(value))
+
+
+def cookie_remove_demo(request):
+    response = HttpResponse("<h1>demo_cookie deleted</h1>")
+    response.delete_cookie('demo_cookie')
+    return response

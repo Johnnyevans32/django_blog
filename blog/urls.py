@@ -4,7 +4,7 @@ from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     # ── Blog views ──────────────────────────────────────────────────────────
-    path('', cache_page(60)(views.PostList.as_view()), name='home'),
+    path('', views.PostList.as_view(), name='home'),
 
     # Cookie check
     path('testcookie/', views.cookie_session, name='testcookie'),

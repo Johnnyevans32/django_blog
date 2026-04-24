@@ -13,6 +13,10 @@ class PostList(generic.ListView):
     queryset = Post.objects.filter(status=1).order_by('-created_on')
     template_name = 'index.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        logger.warning('Homepage was accessed at %s hours!', timezone.now())
+        return super().dispatch(request, *args, **kwargs)
+
 class PostDetail(generic.DetailView):
     model = Post
     template_name = 'post_detail.html'

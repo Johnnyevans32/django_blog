@@ -93,6 +93,10 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
         'verbose': {
             'format': '{asctime} {levelname} {name} {message}',
             'style': '{',
@@ -102,10 +106,19 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
+            'level': 'INFO',
+        },
+        'warning_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': str(BASE_DIR / 'warning.log'),
+            'maxBytes': 1024 * 1024,
+            'backupCount': 3,
+            'formatter': 'verbose',
+            'level': 'WARNING',
         }
     },
     'root': {
-        'handlers': ['console'],
+        'handlers': ['console', 'warning_file'],
         'level': 'INFO',
     },
     'loggers': {

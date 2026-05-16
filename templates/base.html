@@ -48,6 +48,21 @@
  <li class="nav-item text-black">
  <a class="nav-link text-black font-weight-bold" href="#">Contact</a>
  </li>
+ {% if user.is_authenticated %}
+ <li class="nav-item">
+ <span class="nav-link text-black">{{ user.username }}</span>
+ </li>
+ <li class="nav-item">
+ <form method="post" action="{% url 'logout' %}" class="d-inline">
+ {% csrf_token %}
+ <button type="submit" class="btn btn-sm btn-outline-secondary mt-1">Log out</button>
+ </form>
+ </li>
+ {% else %}
+ <li class="nav-item">
+ <a class="nav-link text-black font-weight-bold" href="{% url 'login' %}">Log in</a>
+ </li>
+ {% endif %}
  </ul>
  </div>
  </div>

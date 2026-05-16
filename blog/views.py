@@ -2,10 +2,14 @@ import logging
 
 from django.views import generic
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.contrib.auth.views import redirect_to_login
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from django.views.generic.base import RedirectView
 from django.utils import timezone
 from .models import Post, Comment
+from .forms import CommentForm
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +28,36 @@ class PostDetail(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = self.object.comments.filter(active=True)
+        context['comment_form'] = CommentForm()
         return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
+        self.object = self.get_object()
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = self.object
+            comment.name = request.user.username
+            comment.email = request.user.email
+            comment.save()
+            return redirect('post_detail', slug=self.object.slug)
+        context = self.get_context_data()
+        context['comment_form'] = form
+        return self.render_to_response(context)
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 
 # ── Session demo views (lecture material) ────────────────────────────────────

@@ -29,5 +29,25 @@
       </div>
     </div>
   </div>
+  <!-- Add Comment -->
+  <div class="row">
+    <div class="col-md-8 card mb-4 mt-3">
+      <div class="card-body">
+        {% if user.is_authenticated %}
+        <h3>Leave a comment</h3>
+        <p class="text-muted">Commenting as <strong>{{ user.username }}</strong></p>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group mb-3">
+            {{ comment_form.body }}
+          </div>
+          <button type="submit" class="btn btn-primary">Post comment</button>
+        </form>
+        {% else %}
+        <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to leave a comment.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}
